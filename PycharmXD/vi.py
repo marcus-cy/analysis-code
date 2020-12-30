@@ -35,7 +35,7 @@ def login_cookie():
     cookies = driver.get_cookies()
     jsonCookies = json.dumps(cookies)
     #下面的文件位置需要自己改
-    with open('E:/zhihu.txt','w') as f:
+    with open('zhihu.txt','w') as f:
         f.write(jsonCookies)
     driver.quit()
 
@@ -47,7 +47,7 @@ def login():
     driver.get(LOGIN_URL)
     time.sleep(5)
     #下面的文件位置需要自己改，与上面的改动一致
-    f = open('E:/zhihu.txt')
+    f = open('zhihu.txt')
     cookies = f.read()
     jsonCookies = json.loads(cookies)
     for co in jsonCookies:
@@ -66,7 +66,7 @@ def get_answers(question_url):
         element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, xpath)))
         answer = element.text
         #下面的文件位置需要自己改，保存到你想要的位置
-        file = open('E:/Users/zxw/Desktop/修身/与自己/数据分析/数据分析/爬虫/回答/answer{}.txt'.format(k+1),'w',encoding='utf-8')
+        file = open('answer{}.txt'.format(k+1),'w',encoding='utf-8')
         file.write(answer)
         file.close()
         print('answer '+ str(k+1) +' collected!')
@@ -77,7 +77,7 @@ def get_answers(question_url):
 
 if __name__ == "__main__":
     # 设置你想要搜索的问题
-    question_url ='https://www.zhihu.com/'
+    question_url ='https://www.zhihu.com/question/21592677/answer/142800018'
     login_cookie()
     driver = get_driver()
     login()
