@@ -111,7 +111,7 @@ Selenium 支持 PhantomJS，这样在运行的时候就不会再弹出一个浏�
 Docker 是一种容器技术，可以将应用和环境等进行打包，形成一个独立的、类似于 iOS 的 App 形式的 “应用”,这个应用可以直接被分发到任意一个支持 Docker 的环境中，通过简单的命令即可启动运行。
 Docker 是一种最流行的容器化实现方案。使用 Docker，可以让每个应用彼此相互隔离，在同一台机器上同时运行多个应用，不过它们彼此之间共享同一个操作系统。Docker 的优势在于，它可以在更细的粒度上进行资源管理，也比虚拟化技术更加节约资源。
 ```
-### HTTPS 基本原理
+## HTTPS 基本原理
 ```
 HTTPS 的全称是 Hyper Text Transfer Protocol over Secure Socket Layer，是以安全为目标的 HTTP 通道，简单讲是 HTTP 的安全版，即 HTTP 下加入 SSL 层，简称为 HTTPS。
 HTTPS 的安全基础是 SSL，因此通过它传输的内容都是经过 SSL 加密的，它的主要作用可以分为两种。
@@ -119,3 +119,45 @@ HTTPS 的安全基础是 SSL，因此通过它传输的内容都是经过 SSL �
 1.建立一个信息安全通道来保证数据传输的安全。
 2.确认网站的真实性，凡是使用了 HTTPS 的网站，都可以通过点击浏览器地址栏的锁头标志来查看网站认证之后的真实信息，也可以通过 CA 机构颁发的安全签章来查询
 ```
+## Scrapy框架
+![kuangjia](F:\gitcode\analysis-code\13-1.jpg)
+
+- Engine，引擎，用来处理整个系统的数据流处理，触发事务，是整个框架的核心。
+
+- Item，项目，它定义了爬取结果的数据结构，爬取的数据会被赋值成该对象。
+
+- Scheduler， 调度器，用来接受引擎发过来的请求并加入队列中，并在引擎再次请求的时候提供给引擎。
+
+- Downloader，下载器，用于下载网页内容，并将网页内容返回给蜘蛛。
+
+- Spiders，蜘蛛，其内定义了爬取的逻辑和网页的解析规则，它主要负责解析响应并生成提取结果和新的请求。
+
+- Item Pipeline，项目管道，负责处理由蜘蛛从网页中抽取的项目，它的主要任务是清洗、验证和存储数据。
+
+- Downloader Middlewares，下载器中间件，位于引擎和下载器之间的钩子框架，主要是处理引擎与下载器之间的请求及响应。
+
+- Spider Middlewares， 蜘蛛中间件，位于引擎和蜘蛛之间的钩子框架，主要工作是处理蜘蛛输入的响应和输出的结果及新的请求。
+
+```
+Engine 首先打开一个网站，找到处理该网站的 Spider 并向该 Spider 请求第一个要爬取的 URL。
+Engine 从 Spider 中获取到第一个要爬取的 URL 并通过 Scheduler 以 Request 的形式调度。
+Engine 向 Scheduler 请求下一个要爬取的 URL。
+Scheduler 返回下一个要爬取的 URL 给 Engine，Engine 将 URL 通过 Downloader Middlewares 转发给 Downloader 下载。
+一旦页面下载完毕， Downloader 生成一个该页面的 Response，并将其通过 Downloader Middlewares 发送给 Engine。
+Engine 从下载器中接收到 Response 并通过 Spider Middlewares 发送给 Spider 处理。
+Spider 处理 Response 并返回爬取到的 Item 及新的 Request 给 Engine。
+Engine 将 Spider 返回的 Item 给 Item Pipeline，将新的 Request 给 Scheduler。
+重复第二步到最后一步，直到  Scheduler 中没有更多的 Request，Engine 关闭该网站，爬取结束。
+```
+
+### Scrap项目创建
+- 1.windows中cmd环境下执行：`scrapy startproject 项目名`
+若报错 “ImportError:DLL load failed”，执行 `pip install -I cryptography`
+
+- 2.`cd 项目名`；`scrapy genspider 爬虫文件名 所爬网站`
+
+### Response解析
+parse() 方法的参数 response 是 start_urls 里面的链接爬取后的结果。所以在 parse() 方法中，我们可以直接对 response 变量包含的内容进行解析，提取的方式可以是 CSS 选择器或 XPath 选择器
+
+### Request
+上面的操作实现了从初始页面抓取内容。那么，下一页的内容该如何抓取？这就需要我们从当前页面中找到信息来生成下一个请求，然后在下一个请求的页面里找到信息再构造再下一个请求。这样循环往复迭代，从而实现整站的爬取。
