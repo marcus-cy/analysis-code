@@ -3,8 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="5244c6ea-a9c4-4a06-8c68-bcdab56f1ed9" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code.py" beforeDir="false" afterPath="$PROJECT_DIR$/code.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../httpssegmentfault.coma1190000017088424.md" beforeDir="false" afterPath="$PROJECT_DIR$/../httpssegmentfault.coma1190000017088424.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tutorial/tutorial/items.py" beforeDir="false" afterPath="$PROJECT_DIR$/../tutorial/tutorial/items.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tutorial/tutorial/spiders/quotes.py" beforeDir="false" afterPath="$PROJECT_DIR$/../tutorial/tutorial/spiders/quotes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../vi.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -125,7 +125,7 @@
       <workItem from="1608887820718" duration="5809000" />
       <workItem from="1609242177619" duration="3145000" />
       <workItem from="1609831566986" duration="825000" />
-      <workItem from="1609848083245" duration="11337000" />
+      <workItem from="1609848083245" duration="16551000" />
     </task>
     <servers />
   </component>
