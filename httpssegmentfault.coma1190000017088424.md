@@ -62,6 +62,34 @@ div 标签定义了网页中的区块，它的 id 是 container，这是一个�
   这是一个非常常见的问题。现在网页越来越多地采用 Ajax、前端模块化工具来构建，整个网页可能都是由 JavaScript 渲染出来的，也就是说原始的 HTML 代码就是一个空壳
   ```
 
+## CSS 
+
+- 要选择文本节点，使用 `::text`
+
+- 选择属性值，用`::attr(name)` name是指你想要的价值属性的名称
+
+- | **选择器** | **含义**                                                     |
+  | ---------- | ------------------------------------------------------------ |
+  | *          | 通用元素选择器，匹配页面任何元素（这也就决定了我们很少使用） |
+  | #id        | id选择器，匹配特定id的元素                                   |
+  | .class     | 类选择器，匹配class**包含(不是等于)**特定类的元素            |
+  | element    | 标签选择器 根据标签选择元素                                  |
+  | [attr]     | 属性选择器 根据元素属性去选择                                |
+
+- | **选择器**        | ***\*示例\**** | ***\*示例说明\****                   | **含义**                                                     |
+| ----------------- | -------------- | ------------------------------------ | ------------------------------------------------------------ |
+| elementE,elementF | div,p          | 选择所有<div>元素和<p>元素           | 多元素选择器，用”,分隔，同时匹配元素E或元素F                 |
+| elementE elementF | div p          | 选择<div>元素内的所有<p>元素         | 后代选择器，用空格分隔，匹配E元素所有的**后代（不只是子元素、子元素向下递归）**元素F |
+| elementE>elementF | div>p          | 选择所有父级是 <div> 元素的 <p> 元素 | 子元素选择器，用”>”分隔，匹配E元素的所有直接子元素           |
+| elementE+elementF | div+p          | 选择所有紧接着<div>元素之后的<p>元素 | 直接相邻选择器，匹配E元素**之后**的**相邻**的**同级**元素F   |
+| elementE~elementF | p~ul           | 选择p元素之后的每一个ul元素          | 普通相邻选择器，匹配E元素**之后**的**同级**元素F（无论直接相邻与否） |
+| .class1.class2    | .user.login    | 匹配如<div class="user login">元素   | 匹配类名中既包含class1又包含class2的元素                     |
+
+<img src="F:\gitcode\analysis-code\微信图片_20210111135712.png" alt="CSS1" style="zoom:67%;" />
+<img src="F:\gitcode\analysis-code\微信图片_20210111135607.png" alt="CSS2" style="zoom:67%;" />
+<img src="F:\gitcode\analysis-code\微信图片_20210111135801.png" alt="CSS3" style="zoom:67%;" />
+
+
 ## WebService
 ```
 通过WebService，应用程序可以向全世界发布信息，或提供某项功能
@@ -150,14 +178,54 @@ Engine 将 Spider 返回的 Item 给 Item Pipeline，将新的 Request 给 Sched
 重复第二步到最后一步，直到  Scheduler 中没有更多的 Request，Engine 关闭该网站，爬取结束。
 ```
 
+```
+scrapy.cfg：它是 Scrapy 项目的配置文件，其内定义了项目的配置文件路径、部署相关信息等内容。
+items.py：它定义 Item 数据结构，所有的 Item 的定义都可以放这里。
+pipelines.py：它定义 Item Pipeline 的实现，所有的 Item Pipeline 的实现都可以放这里。
+settings.py：它定义项目的全局配置。
+middlewares.py：它定义 Spider Middlewares 和 Downloader Middlewares 的实现。
+spiders：其内包含一个个 Spider 的实现，每个 Spider 都有一个文件。
+```
+
+
+
 ### Scrap项目创建
+
 - 1.windows中cmd环境下执行：`scrapy startproject 项目名`
 若报错 “ImportError:DLL load failed”，执行 `pip install -I cryptography`
-
 - 2.`cd 项目名`；`scrapy genspider 爬虫文件名 所爬网站`
+### Item创建
+Item 是保存爬取数据的容器，它的使用方法和字典类似。不过，相比字典，Item 多了额外的保护机制，可以避免拼写错误或者定义字段错误。
+创建 Item 需要继承 scrapy.Item 类，并且定义类型为 scrapy.Field 的字段
 
 ### Response解析
 parse() 方法的参数 response 是 start_urls 里面的链接爬取后的结果。所以在 parse() 方法中，我们可以直接对 response 变量包含的内容进行解析，提取的方式可以是 CSS 选择器或 XPath 选择器
 
 ### Request
 上面的操作实现了从初始页面抓取内容。那么，下一页的内容该如何抓取？这就需要我们从当前页面中找到信息来生成下一个请求，然后在下一个请求的页面里找到信息再构造再下一个请求。这样循环往复迭代，从而实现整站的爬取。
+
+start_requests()，此方法用于生成初始请求，它必须返回一个可迭代对象，此方法会默认使用 start_urls 里面的 URL 来构造 Request，而且 Request 是 GET 请求方式。如果我们想在启动时以 POST 方式访问某个站点，可以直接重写这个方法，发送 POST 请求时我们使用 FormRequest 即可
+
+### Downloader Middleware 
+
+Downloader Middleware 的功能十分强大，修改 User-Agent、处理重定向、设置代理、失败重试、设置 Cookies 等功能都需要借助它来实现。下面我们来了解一下 Downloader Middleware 的详细用法。在整个架构中起作用的位置是以下两个。
+
+- 在 Scheduler 调度出队列的 Request 发送给 Downloader 下载之前，也就是我们可以在 Request 执行下载之前对其进行修改。
+- 在下载后生成的 Response 发送给 Spider 之前，也就是我们可以在生成 Resposne 被 Spider 解析之前对其进行修改。
+
+### Item Pipeline
+
+- process_item(item, spider)
+
+- open_spider(spider)
+- close_spider(spider)
+- from_crawler(cls, crawler)
+
+### Scrapy对接Selenium
+Scrapy 抓取页面的方式和 requests 库类似，都是直接模拟 HTTP 请求，而 Scrapy 也不能抓取 JavaScript 动态渲染的页面。抓取 JavaScript 渲染的页面有两种方式
+一种是分析 Ajax 请求，找到其对应的接口抓取，Scrapy 同样可以用此种方式抓取。
+另一种是直接用 Selenium 或 Splash 模拟浏览器进行抓取，我们不需要关心页面后台发生的请求，也不需要分析渲染过程，只需要关心页面最终结果即可，可见即可爬。那么，如果 Scrapy 可以对接 Selenium，那 Scrapy 就可以处理任何网站的抓取了
+
+当 process_request() 方法返回 Response 对象的时候，更低优先级的 Downloader Middleware 的 process_request() 和 process_exception() 方法就不会被继续调用了，转而开始执行每个 Downloader Middleware 的 process_response() 方法，调用完毕之后直接将 Response 对象发送给 Spider 来处理。
+
+这里直接返回了一个 HtmlResponse 对象，它是 Response 的子类，返回之后便顺次调用每个 Downloader Middleware 的 process_response() 方法。而在 process_response() 中我们没有对其做特殊处理，它会被发送给 Spider，传给 Request 的回调函数进行解析。
