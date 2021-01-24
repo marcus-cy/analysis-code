@@ -8,13 +8,14 @@ pd.set_option('display.max_rows', 200)
 #设置value的显示长度为100，默认为50
 pd.set_option('max_colwidth',250)
 
-
-df=pd.read_csv('20210113.csv')
+file='20210122'
+df=pd.read_csv(file+'.csv')
+df['dt']=file
 df.shape
 # df=df.drop('字段1',axis=1)
-df.columns=['Symbol','Expiration','Size','Strike','Spot','Received','image']
-df['Type']=df['image'].map(lambda x: 'Call' if 'QmCC' in x else 'Put')
-df=df.drop('image',axis=1)
+# df.columns=['Symbol','Expiration','Size','Strike','Spot','Received','Image','dt']
+df['Type']=df['Image'].map(lambda x: 'Call' if 'QmCC' in x else 'Put')
+df=df.drop('Image',axis=1)
 # -----------------------------------------------------------------------------
 boring_list=['AAPL','AMZN','MSFT','AMD','TSLA','BA','INTC','BAC','WFC','F','T','FB','C','MS']
 df=df[~df.Symbol.isin(boring_list)].reset_index(drop=True)
@@ -33,9 +34,6 @@ df_max=df['Cap'].groupby([df.Symbol,df.Type]).agg(['count','max']).sort_values(b
 def df_um(*kg):
     d=pd.DataFrame()
     for df in kg:
-        import inspect
-        callers_local_vars = inspect.currentframe().f_back.f_locals.items()
-        df['name']= [var_name for var_name, var_val in callers_local_vars if var_val is df][0]
         d=pd.concat([d,df],axis=0)
     return d
 
