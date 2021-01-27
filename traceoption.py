@@ -8,7 +8,7 @@ pd.set_option('display.max_rows', 200)
 #设置value的显示长度为100，默认为50
 pd.set_option('max_colwidth',250)
 
-file='20210122'
+file='20210126'
 df=pd.read_csv(file+'.csv')
 df['dt']=file
 df.shape
