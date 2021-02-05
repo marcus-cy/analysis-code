@@ -8,7 +8,7 @@ pd.set_option('display.max_rows', 200)
 #设置value的显示长度为100，默认为50
 pd.set_option('max_colwidth',250)
 
-file='20210203'
+file='20210204'
 df=pd.read_csv(file+'.csv')
 df['dt']=file
 # df=df.drop('字段1',axis=1)
@@ -16,7 +16,7 @@ df['dt']=file
 df['Type']=df['Image'].map(lambda x: 'Call' if 'QmCC' in x else 'Put')
 df=df.drop('Image',axis=1)
 # -----------------------------------------------------------------------------
-boring_list=['AAPL','AMZN','MSFT','AMD','TSLA','BA','INTC','BAC','WFC','F','T','FB','C','MS']
+boring_list=['AAPL','AMZN','MSFT','AMD','TSLA','BA','INTC','BAC','WFC','F','T','FB','C','MS','NVDA','QCOM']
 df=df[~df.Symbol.isin(boring_list)].reset_index(drop=True)
 # ----------------------------------------------------------
 df['Cap']=df['Size'].map(lambda x: float(x[1:-1]) if 'K' in x else float(x[1:-1])*1000 )
