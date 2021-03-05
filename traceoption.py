@@ -8,7 +8,7 @@ pd.set_option('display.max_rows', 200)
 #设置value的显示长度为100，默认为50
 pd.set_option('max_colwidth',250)
 
-file='20210225'
+file='20210304'
 df=pd.read_csv(file+'.csv')
 df['dt']=file
 # df=df.drop('字段1',axis=1)
@@ -30,7 +30,7 @@ df.to_csv('df_'+file[-4:]+'.csv')
 # --------------------------------------------------------------------------------------------------------------------------
 # df_count_14=pd.read_csv('df_count_0114.csv',index_col=0)
 # df_count_15=pd.read_csv('df_count_0115.csv',index_col=0)
-def um(cols=['01','02']):
+def um(cols=['01','02','03']):
     d=pd.DataFrame()
     import os
     for j in cols:
@@ -52,10 +52,14 @@ a=df_union['dt'].groupby(df_union.Symbol).nunique()
 b=df_union['dt'].groupby(df_union.Symbol).count()
 c=df_union[df_union.Type=='Call']['dt'].groupby(df_union.Symbol).count()
 d=df_union[df_union.Type=='Put']['dt'].groupby(df_union.Symbol).count()
-e=pd.concat([a,b,c,d],axis=1)
+df_union['recent_7']=df_union['Received'].map(lambda x:1 if(datetime.datetime.strptime(time.strftime('%Y-%m-%d', time.localtime(time.time())),'%Y-%m-%d') - datetime.datetime.strptime(x, '%Y/%m/%d %H:%M')).days<7 else 0)
+g=df_union['recent_7'].groupby(df_union.Symbol).sum()
+
+e=pd.concat([a,b,c,d,g],axis=1)
 e=e.reset_index()
-e.columns=['Symbol','u_cnt','cnt','call','put']
+e.columns=['Symbol','u_cnt','cnt','call','put','recent_7']
 e['if']=e.Symbol.map(lambda x:1 if x in df.Symbol.values else 0)
+e['call_ratio']=e['call']/e['cnt']
 e=e.sort_values(by='u_cnt',ascending=True)
 
 
